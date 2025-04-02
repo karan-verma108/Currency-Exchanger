@@ -1,3 +1,5 @@
 import Input from './Input';
+import DropdownOptions from './DropdownOptions';
+import CurrencyDropdown from './CurrencyDropdown';
 
-export { Input };
+export { Input, DropdownOptions, CurrencyDropdown };
