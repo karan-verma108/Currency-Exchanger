@@ -1,14 +1,24 @@
+import { twMerge } from 'tw-merge';
+
 export default function Dropdown({
   data,
+  className,
   currencyItems,
   onItemClick,
 }: {
   data: any;
+  className: string;
   currencyItems: any;
   onItemClick: (currency: string) => void;
 }): React.JSX.Element {
   return (
-    <div className='z-10 absolute top-20 bg-white divide-y divide-gray-100 border border-gray-200 rounded-lg shadow-sm overflow-y-auto h-44 container'>
+    <div
+      className={twMerge(
+        `z-10 absolute top-20 bg-white divide-y divide-gray-100 border border-gray-200 rounded-lg shadow-sm overflow-y-auto h-44 container ${
+          className ?? ''
+        }`
+      )}
+    >
       <ul
         className='py-2 text-sm text-gray-700  text-center flex flex-col gap-2.5'
         aria-labelledby='dropdownDefaultButton'

@@ -27,10 +27,38 @@ export default function App() {
       case 'SET_DATA':
         return { ...state, data: action.payload };
 
-      case 'SET_DROPDOWN_VISIBILITY':
+      case 'SET_ORIGIN_CURRENCY_DROPDOWN_VISIBILITY':
         return {
           ...state,
-          isDropdownVisible: action.payload ? false : !state.isDropdownVisible,
+          isOriginCurrencyDropdownVisible: action.payload
+            ? false
+            : !state.isOriginCurrencyDropdownVisible,
+        };
+
+      case 'SET_DESTINATION_CURRENCY_DROPDOWN_VISIBILITY':
+        return {
+          ...state,
+          isDestinationCurrencyDropdownVisible: action.payload
+            ? false
+            : !state.isDestinationCurrencyDropdownVisible,
+        };
+
+      case 'CALCULATE_CURRENCY_EXCHANGE':
+        return {
+          ...state,
+          convertedAmount: (
+            state?.data?.conversion_rates?.[state?.destinationCurrency] *
+            state?.baseAmount
+          ).toFixed(2),
+        };
+
+      case 'SWAP_CLICK':
+        return {
+          ...state,
+          originCurrency: state.destinationCurrency,
+          destinationCurrency: state.originCurrency,
+          baseAmount: state.convertedAmount,
+          convertedAmount: state.baseAmount,
         };
 
       default:
@@ -46,7 +74,9 @@ export default function App() {
   const currencyItems = state?.data?.conversion_rates;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const currenciesDropdownRef: any = useRef(null);
+  const originCurrenciesDropdownRef: any = useRef(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const destinationCurrenciesDropdownRef: any = useRef(null);
 
   const currencyApi: string = `${import.meta.env.VITE_CURRENCY_CONVERTER_API}${
     state?.originCurrency
@@ -70,10 +100,22 @@ export default function App() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleClickOutside = (e: any) => {
       if (
-        currenciesDropdownRef.current &&
-        !currenciesDropdownRef.current.contains(e.target)
+        originCurrenciesDropdownRef.current &&
+        !originCurrenciesDropdownRef.current.contains(e.target)
       ) {
-        dispatch({ type: 'SET_DROPDOWN_VISIBILITY', payload: 'false' });
+        dispatch({
+          type: 'SET_ORIGIN_CURRENCY_DROPDOWN_VISIBILITY',
+          payload: 'false',
+        });
+      }
+      if (
+        destinationCurrenciesDropdownRef.current &&
+        !destinationCurrenciesDropdownRef.current.contains(e.target)
+      ) {
+        dispatch({
+          type: 'SET_DESTINATION_CURRENCY_DROPDOWN_VISIBILITY',
+          payload: 'false',
+        });
       }
     };
 
@@ -88,7 +130,24 @@ export default function App() {
     dispatch({ type: 'SET_ORIGIN_CURRENCY', payload: label });
   };
 
-  console.log('stata.data', state);
+  const handleDestinationCurrencyClick = (label: string) => {
+    dispatch({ type: 'SET_DESTINATION_CURRENCY', payload: label });
+  };
+
+  const handleCurrencyExchange = () => {
+    dispatch({ type: 'CALCULATE_CURRENCY_EXCHANGE' });
+  };
+
+  const onSwapClick = () => {
+    dispatch({ type: 'SWAP_CLICK' });
+  };
+
+  console.log('stata.data', { state: state, conversionRates: currencyItems });
+
+  console.log(
+    'result',
+    currencyItems?.[state?.destinationCurrency] * state?.baseAmount
+  );
 
   return (
     <div className='h-screen flex flex-col justify-center items-center bg-amber-200 w-full'>
@@ -97,7 +156,7 @@ export default function App() {
           <Input
             id='baseAmount'
             name='baseAmount'
-            value={state?.baseAmount}
+            value={state?.baseAmount === 0 ? null : state?.baseAmount}
             label='From'
             placeholder='0'
             type='number'
@@ -112,16 +171,22 @@ export default function App() {
 
           <CurrencyDropdown
             state={state}
-            ref={currenciesDropdownRef}
+            selectedCurrency={state?.originCurrency}
+            ref={originCurrenciesDropdownRef}
             onDropdownClick={() =>
-              dispatch({ type: 'SET_DROPDOWN_VISIBILITY' })
+              dispatch({ type: 'SET_ORIGIN_CURRENCY_DROPDOWN_VISIBILITY' })
             }
             currencyItems={currencyItems}
+            isDropdownVisible={state.isOriginCurrencyDropdownVisible}
             onItemClick={handleOriginCurrencyClick}
+            // className='bg-orange-400'
           />
         </div>
       </div>
-      <button className='bg-blue-500 text-white rounded-lg py-2 px-3 cursor-pointer'>
+      <button
+        onClick={onSwapClick}
+        className='bg-blue-500 text-white rounded-lg py-2 px-3 cursor-pointer'
+      >
         Swap
       </button>
       <div className='py-4 border border-slate-200 shadow-2xl w-6/12 rounded-lg bg-white'>
@@ -129,7 +194,7 @@ export default function App() {
           <Input
             id='convertedAmount'
             name='convertedAmount'
-            value={state?.convertedAmount}
+            value={state?.convertedAmount === 0 ? null : state?.convertedAmount}
             label='To'
             placeholder='0'
             type='number'
@@ -144,15 +209,24 @@ export default function App() {
 
           <CurrencyDropdown
             state={state}
-            ref={currenciesDropdownRef}
+            selectedCurrency={state?.destinationCurrency}
+            ref={destinationCurrenciesDropdownRef}
             onDropdownClick={() =>
-              dispatch({ type: 'SET_DROPDOWN_VISIBILITY' })
+              dispatch({ type: 'SET_DESTINATION_CURRENCY_DROPDOWN_VISIBILITY' })
             }
             currencyItems={currencyItems}
-            onItemClick={handleOriginCurrencyClick}
+            isDropdownVisible={state.isDestinationCurrencyDropdownVisible}
+            onItemClick={handleDestinationCurrencyClick}
+            // className='bg-red-400'
           />
         </div>
       </div>
+      <button
+        onClick={handleCurrencyExchange}
+        className='bg-blue-400 text-white rounded-lg py-3 px-4 cursor-pointer'
+      >
+        Covert {state?.originCurrency} to {state?.destinationCurrency}
+      </button>
     </div>
   );
 }

@@ -5,23 +5,28 @@ export type CurrencyExhangeActions =
   | { type: 'SET_DESTINATION_CURRENCY'; payload: string }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { type: 'SET_DATA'; payload: any }
-  | { type: 'SET_DROPDOWN_VISIBILITY'; payload?: string };
+  | { type: 'SET_ORIGIN_CURRENCY_DROPDOWN_VISIBILITY'; payload?: string }
+  | { type: 'SET_DESTINATION_CURRENCY_DROPDOWN_VISIBILITY'; payload?: string }
+  | { type: 'CALCULATE_CURRENCY_EXCHANGE' }
+  | { type: 'SWAP_CLICK' };
 
 export const initialState: InitialStateType = {
   originCurrency: 'usd',
   destinationCurrency: 'inr',
-  baseAmount: 0,
-  convertedAmount: 0,
+  baseAmount: null,
+  convertedAmount: null,
   data: {},
-  isDropdownVisible: false,
+  isOriginCurrencyDropdownVisible: false,
+  isDestinationCurrencyDropdownVisible: false,
 };
 
 export interface InitialStateType {
   originCurrency: string;
   destinationCurrency: string;
-  baseAmount: number;
-  convertedAmount: number;
+  baseAmount: number | null;
+  convertedAmount: number | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
-  isDropdownVisible: boolean;
+  isOriginCurrencyDropdownVisible: boolean;
+  isDestinationCurrencyDropdownVisible: boolean;
 }
