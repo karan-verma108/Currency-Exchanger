@@ -25,7 +25,7 @@ export default function CurrencyDropdown({
 }): React.JSX.Element {
   return (
     <div
-      className='flex flex-col gap-3 relative'
+      className='flex flex-col gap-3 relative w-full sm:w-fit'
       onClick={() => onDropdownClick()}
       ref={ref}
     >

@@ -6,8 +6,10 @@ export default function Dropdown({
   currencyItems,
   onItemClick,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   className: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   currencyItems: any;
   onItemClick: (currency: string) => void;
 }): React.JSX.Element {
@@ -29,7 +31,7 @@ export default function Dropdown({
             <li
               key={currencyLabel}
               value={currencyLabel}
-              className='cursor-pointer hover:bg-blue-400 hover:text-black py-1'
+              className='cursor-pointer hover:bg-amber-300 hover:text-amber-700 py-1'
               onClick={() => onItemClick(currencyLabel)}
             >
               {currencyLabel}

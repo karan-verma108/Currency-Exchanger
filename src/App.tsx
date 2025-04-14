@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef } from 'react';
+
 import { CurrencyDropdown, Input } from './components/elements';
 import {
   CurrencyExhangeActions,
@@ -8,6 +9,7 @@ import {
 
 export default function App() {
   const currencyExchangeReducer = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     state: any,
     action: CurrencyExhangeActions
   ) => {
@@ -92,9 +94,9 @@ export default function App() {
     }
   };
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -142,91 +144,97 @@ export default function App() {
     dispatch({ type: 'SWAP_CLICK' });
   };
 
-  console.log('stata.data', { state: state, conversionRates: currencyItems });
-
-  console.log(
-    'result',
-    currencyItems?.[state?.destinationCurrency] * state?.baseAmount
-  );
-
   return (
-    <div className='h-screen flex flex-col justify-center items-center bg-amber-200 w-full'>
-      <div className='py-4 border border-slate-200 shadow-2xl w-6/12 rounded-lg bg-white'>
-        <div className='px-3 flex justify-between rounded-lg'>
-          <Input
-            id='baseAmount'
-            name='baseAmount'
-            value={state?.baseAmount === 0 ? null : state?.baseAmount}
-            label='From'
-            placeholder='0'
-            type='number'
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              dispatch({
-                type: 'SET_BASE_AMOUNT',
-                payload: Number(e.target.value),
-              })
-            }
-            inputClassName='outline-0 border border-slate-400 rounded-lg p-1'
-          />
-
-          <CurrencyDropdown
-            state={state}
-            selectedCurrency={state?.originCurrency}
-            ref={originCurrenciesDropdownRef}
-            onDropdownClick={() =>
-              dispatch({ type: 'SET_ORIGIN_CURRENCY_DROPDOWN_VISIBILITY' })
-            }
-            currencyItems={currencyItems}
-            isDropdownVisible={state.isOriginCurrencyDropdownVisible}
-            onItemClick={handleOriginCurrencyClick}
-            // className='bg-orange-400'
+    <div className='h-screen flex flex-col justify-center items-center bg-amber-200 w-full shadow-2xl'>
+      <div className='flex sm:flex-row flex-col sm:w-10/12 w-full sm:mx-auto bg-white justify-between rounded-lg sm:ps-3 sm:py-3 p-3'>
+        <div className='sm:w-1/2 w-full'>
+          <img
+            src='https://images.unsplash.com/photo-1591033594798-33227a05780d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y3VycmVuY3l8ZW58MHx8MHx8fDA%3D'
+            alt='currency-img'
+            className='size-full rounded-lg'
           />
         </div>
-      </div>
-      <button
-        onClick={onSwapClick}
-        className='bg-blue-500 text-white rounded-lg py-2 px-3 cursor-pointer'
-      >
-        Swap
-      </button>
-      <div className='py-4 border border-slate-200 shadow-2xl w-6/12 rounded-lg bg-white'>
-        <div className='px-3 flex justify-between rounded-lg'>
-          <Input
-            id='convertedAmount'
-            name='convertedAmount'
-            value={state?.convertedAmount === 0 ? null : state?.convertedAmount}
-            label='To'
-            placeholder='0'
-            type='number'
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              dispatch({
-                type: 'SET_CONVERTED_AMOUNT',
-                payload: Number(e.target.value),
-              })
-            }
-            inputClassName='outline-0 border border-slate-400 rounded-lg p-1'
+        <div className='sm:w-1/2 w-full flex flex-col gap-3 justify-center items-center'>
+          <div className='sm:w-11/12 sm:mx-auto w-full flex gap-3 sm:justify-between px-3 py-4 border border-slate-200 shadow-lg rounded-lg bg-white'>
+            <Input
+              id='baseAmount'
+              name='baseAmount'
+              value={state?.baseAmount === 0 ? null : state?.baseAmount}
+              label='From'
+              placeholder='0'
+              type='number'
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                dispatch({
+                  type: 'SET_BASE_AMOUNT',
+                  payload: Number(e.target.value),
+                })
+              }
+              inputClassName='outline-0 border border-slate-400 rounded-lg p-1 w-full'
+            />
+
+            <CurrencyDropdown
+              state={state}
+              selectedCurrency={state?.originCurrency}
+              ref={originCurrenciesDropdownRef}
+              onDropdownClick={() =>
+                dispatch({ type: 'SET_ORIGIN_CURRENCY_DROPDOWN_VISIBILITY' })
+              }
+              currencyItems={currencyItems}
+              isDropdownVisible={state.isOriginCurrencyDropdownVisible}
+              onItemClick={handleOriginCurrencyClick}
+            />
+          </div>
+
+          <img
+            onClick={onSwapClick}
+            src='https://cdn-icons-png.flaticon.com/512/7051/7051977.png'
+            alt='swapIcon'
+            width={50}
+            height={50}
+            className='cursor-pointer'
           />
 
-          <CurrencyDropdown
-            state={state}
-            selectedCurrency={state?.destinationCurrency}
-            ref={destinationCurrenciesDropdownRef}
-            onDropdownClick={() =>
-              dispatch({ type: 'SET_DESTINATION_CURRENCY_DROPDOWN_VISIBILITY' })
-            }
-            currencyItems={currencyItems}
-            isDropdownVisible={state.isDestinationCurrencyDropdownVisible}
-            onItemClick={handleDestinationCurrencyClick}
-            // className='bg-red-400'
-          />
+          <div className='sm:w-11/12 sm:mx-auto w-full py-4 px-3 border border-slate-200 shadow-lg rounded-lg bg-white flex sm:justify-between gap-3'>
+            <Input
+              id='convertedAmount'
+              name='convertedAmount'
+              value={
+                state?.convertedAmount === 0 ? null : state?.convertedAmount
+              }
+              label='To'
+              placeholder='0'
+              type='number'
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                dispatch({
+                  type: 'SET_CONVERTED_AMOUNT',
+                  payload: Number(e.target.value),
+                })
+              }
+              inputClassName='outline-0 border border-slate-400 rounded-lg p-1 w-full'
+            />
+
+            <CurrencyDropdown
+              state={state}
+              selectedCurrency={state?.destinationCurrency}
+              ref={destinationCurrenciesDropdownRef}
+              onDropdownClick={() =>
+                dispatch({
+                  type: 'SET_DESTINATION_CURRENCY_DROPDOWN_VISIBILITY',
+                })
+              }
+              currencyItems={currencyItems}
+              isDropdownVisible={state.isDestinationCurrencyDropdownVisible}
+              onItemClick={handleDestinationCurrencyClick}
+            />
+          </div>
+          <button
+            onClick={handleCurrencyExchange}
+            className='bg-amber-300 text-amber-700 hover:text-black rounded-lg py-3 px-4 cursor-pointer'
+          >
+            Covert {state?.originCurrency} to {state?.destinationCurrency}
+          </button>
         </div>
       </div>
-      <button
-        onClick={handleCurrencyExchange}
-        className='bg-blue-400 text-white rounded-lg py-3 px-4 cursor-pointer'
-      >
-        Covert {state?.originCurrency} to {state?.destinationCurrency}
-      </button>
     </div>
   );
 }

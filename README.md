@@ -52,3 +52,7 @@ export default tseslint.config({
   },
 })
 ```
+
+
+//create a custom hook for fetching currency exchange data
+//update the UI to look more appealing
